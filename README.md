@@ -1,4 +1,4 @@
-# PubSub - lightweight pub/sub messaging
+# MQ - lightweight message queue
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/go-zoox/mq)](https://pkg.go.dev/github.com/go-zoox/mq)
 [![Build Status](https://github.com/go-zoox/mq/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/go-zoox/mq/actions/workflows/ci.yml)
