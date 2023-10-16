@@ -21,6 +21,30 @@ func Consume(app *cli.MultipleProgram) {
 				Value:   "default",
 			},
 			&cli.StringFlag{
+				Name:    "group",
+				Usage:   "the group to consume",
+				EnvVars: []string{"GROUP"},
+				Value:   "default",
+			},
+			&cli.StringFlag{
+				Name:     "consumer",
+				Usage:    "the consumer to consume",
+				EnvVars:  []string{"CONSUMER"},
+				Required: true,
+			},
+			&cli.StringFlag{
+				Name:    "start",
+				Usage:   "the start of the stream",
+				EnvVars: []string{"START"},
+				Value:   "$",
+			},
+			&cli.IntFlag{
+				Name:    "batch-size",
+				Usage:   "the batch size of the stream",
+				EnvVars: []string{"BATCH_SIZE"},
+				Value:   1,
+			},
+			&cli.StringFlag{
 				Name:     "redis-host",
 				Usage:    "the redis host",
 				EnvVars:  []string{"REDIS_HOST"},
@@ -58,10 +82,18 @@ func Consume(app *cli.MultipleProgram) {
 				RedisDB:       ctx.Int("redis-db"),
 			})
 
-			return ps.Consume(context.TODO(), ctx.String("topic"), func(msg *mq.Msg) error {
-				logger.Infof("consume message: %s", string(msg.Body))
-				return nil
-			})
+			return ps.Consume(
+				context.TODO(),
+				ctx.String("topic"),
+				ctx.String("group"),
+				ctx.String("consumer"),
+				ctx.String("start"),
+				ctx.Int("batch-size"),
+				func(msg *mq.Message) error {
+					logger.Infof("consume message: %s", string(msg.Body))
+					return nil
+				},
+			)
 		},
 	})
 }

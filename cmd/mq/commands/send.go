@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-zoox/cli"
 	"github.com/go-zoox/mq"
@@ -19,7 +20,7 @@ func Send(app *cli.MultipleProgram) {
 				EnvVars: []string{"TOPIC"},
 				Value:   "default",
 			},
-			&cli.StringFlag{
+			&cli.StringSliceFlag{
 				Name:     "message",
 				Usage:    "the message to send",
 				EnvVars:  []string{"MESSAGE"},
@@ -63,10 +64,17 @@ func Send(app *cli.MultipleProgram) {
 				RedisDB:       ctx.Int("redis-db"),
 			})
 
-			return ps.Send(context.TODO(), &mq.Msg{
-				Topic: ctx.String("topic"),
-				Body:  []byte(ctx.String("message")),
-			})
+			messages := ctx.StringSlice("message")
+			fmt.Println("messages: ", messages)
+
+			for _, message := range messages {
+				ps.Send(context.TODO(), &mq.Message{
+					Topic: ctx.String("topic"),
+					Body:  []byte(message),
+				})
+			}
+
+			return nil
 		},
 	})
 }
